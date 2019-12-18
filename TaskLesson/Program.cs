@@ -8,15 +8,19 @@ namespace TaskLesson
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
-            MakeLongWork().Start();
-            Console.WriteLine("UI поток закончил");
-            Console.ReadLine();
+            // Первый способ создания задачи (не запуска!). Так никто не создаёт задачи.
+            Task<int> task = new Task<int>(() => 1);
+            Task actionTask = new Task(() => Console.WriteLine("2"));
+
+            // Запуск задачи.
+            task.Start();
+
+            // Второй способ создания задачи(тонкая настройка задачи). StartNew и создаёт, и запускает одновременно. Использовать только опытным.
+            Task.Factory.StartNew(() => Console.WriteLine(), TaskCreationOptions.LongRunning);
+
+            // Третий способ (запуск CPU bound операции - всегда).
+            Task.Run(() => 1);
         }
 
-        private static Task MakeLongWork()
-        {
-            return new Task(() => Console.WriteLine(Thread.CurrentThread.ManagedThreadId));
-        }
     }
 }
